@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% block title %}{% endblock %} Saul Gadgets</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+		<link rel="stylesheet" href="{% static 'main.css' %}">
+		<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <style>
+      [v-cloak] {
+        display: none;
+      }
+    </style>
+	</head>
+
+	<body>
+        <nav class="navbar is-dark" id="navbarapp" role="navigation" aria-label="main navigation"  v-cloak>
+            <div class="navbar-brand">
+              <a class="navbar-item" href="{% url 'frontpage' %}">
+                Saulgadgets
+              </a>
+          
+              <a @click="toggleMenu()" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="main-navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+              </a>
+            </div>
+          
+            <div id="main-navbar" class="navbar-menu" :class="{'is-active': menuClass}">
+                <div class="navbar-start">
+                    <div class="navbar-item">
+                        <form method="get" action="{% url 'search' %}">
+                            <div class="field has-addons">
+                                <div class="control">
+                                  <input class="input" type="text" placeholder="Search...." name="query">
+                                </div>
+                                <div class="control">
+                                  <a class="button is-success">
+                                    Search
+                                  </a>
+                                </div>
+                              </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="navbar-end">
+                    {% for category in menu_categories %}
+                    <a class="navbar-item" href="{% url 'category_detail' category.slug %}">{{ category.title }}</a>
+                    {% endfor %}
+                    <div class="navbar-item">
+                    <a href="{% url 'cart' %}" class="button is-primary">Cart ([[ numItems ]])</a>
+                    </div>
+                    
+                    {% if request.user.is_authenticated %}
+                    <div class="navbar-item">
+                      <a href="{% url 'logout' %}" class="button is-danger">Logout</a>
+                    </div>
+                    {% else %}
+                    <div class="navbar-item">
+                      <div class="buttons">
+                        <a href="{% url 'signup' %}" class="button is-primary"> Signup</a>
+                        <a href="{% url 'login' %}" class="button is-light"> Login</a>
+                      </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+
+		<section class="section">
+            {% block content %}
+            {% endblock %}
+		</section>
+    <footer class="footer">
+      <div class="columns">
+        <div class="column is-4">
+          <h2 class="subtitle">Saulgadgets</h2>
+        </div>
+        <div class="column is-8">
+          <a class="navbar-item" href="{% url 'contact' %}">Contact</a>
+          <a class="navbar-item" href="{% url 'about' %}">About</a>
+          
+        </div>
+      </div>
+    </footer>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/vuex@4.0.2/dist/vuex.global.js"></script>
+    <script>
+        const store = new Vuex.Store({
+        state: {
+            numItems: {{ cart.get_total_length }},
+            totalCost: {{ cart.get_total_cost }}
+
+        },
+        mutations: {
+            increment(state, quantity){
+                state.numItems += quantity
+            },
+            changeTotalCost(state, newCost){
+                state.totalCost += newCost
+            }
+        }
+        });
+        Vue.createApp({
+            delimiters: ['[[', ']]'],
+            store: store,
+            data() {
+                return {
+                    menuClass: false
+                }
+            },
+            computed: {
+                numItems(){
+                    return store.state.numItems    
+                }
+            },
+            methods: {
+                toggleMenu() {
+                    this.menuClass = !this.menuClass
+                }
+            }
+            }).mount('#navbarapp')
+    </script>
+    {% block scripts %}
+    {% endblock %}
+	</body>
+</html> 
