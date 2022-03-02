@@ -15,7 +15,7 @@ class Order(models.Model):
     )
     
     user = models.ForeignKey(User, related_name='orders', on_delete=models.SET_NULL, blank=True, null=True)
-        
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
@@ -35,6 +35,9 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=ORDERED)
     def __str__(self):
         return self.first_name
+
+    def get_total_quantity(self):
+        return sum(int(item.quantity) for item in self.items.all())
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
