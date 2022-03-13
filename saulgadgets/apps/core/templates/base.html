@@ -7,7 +7,7 @@
 		<title>{% block title %}{% endblock %} Saul Gadgets</title>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 		<link rel="stylesheet" href="{% static 'main.css' %}">
-		<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+		<script src="https://unpkg.com/vue@next"></script>
     <style>
       [v-cloak] {
         display: none;
@@ -74,6 +74,8 @@
             {% block content %}
             {% endblock %}
 		</section>
+    {% include 'parts/newsletter.html' %}
+    
     <footer class="footer">
       <div class="columns">
         <div class="column is-4">
@@ -86,7 +88,7 @@
         </div>
       </div>
     </footer>
-    <script src="https://unpkg.com/vue@next"></script>
+    
     <script src="https://unpkg.com/vuex@4.0.2/dist/vuex.global.js"></script>
     <script>
         const store = new Vuex.Store({
