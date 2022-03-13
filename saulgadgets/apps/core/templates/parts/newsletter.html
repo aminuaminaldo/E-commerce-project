@@ -1,16 +1,58 @@
 <div class="newsletter-wrapper" id="newsletter-wrapper">
-    <h2 class="sutitle">
-        Subscribe to our newsletter
-    </h2>
+    <h2 class="subtitle">Subscribe to our newsletter</h2>
+
+    <form v-on:submit.prevent="onSubmit">
+        <div class="field has-addons">
+            <div class="control">
+                <input type="email" v-model="email" name="email" class="input" placeholder="Your e-mail address...">
+            </div>
+            <div class="control">
+                <button class="button is-success">Submit</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="notification is-success" v-if="showSuccess">
+        The e-mail address was saved!
+    </div>
 </div>
+
+
 <script>
     Vue.createApp({
-            delimiters: ['[[', ']]'],
             data() {
-                return {         
+                return {  
+                    email: '',
+                    showSuccess: false      
                 }
             },
-            methods: {   
+            methods: { 
+                onSubmit() {
+                    console.log('onSubmit')
+
+                    fetch('/api/add_subscriber/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({'email': this.email})
+                    })
+                    console.log(this.email)
+                    .then(response => {
+                        return response.json()
+                    })
+                    .then(data => {
+                        console.log(data)
+
+                        this.showSuccess = true
+                        this.email = ''
+                    })
+                    .catch(error =>{
+                        this.showSuccess = false
+                        console.log('Error:', error)
+                    })
+                }  
             }
             }).mount('#newsletter-wrapper')
 </script>
