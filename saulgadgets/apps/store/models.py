@@ -1,26 +1,23 @@
 from io import BytesIO
-from itertools import product
-from pyexpat import model
-from tkinter.tix import Tree
-from unicodedata import category
 from django.core.files import File
 from django.db import models
 from PIL import Image
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     ordering = models.IntegerField(default=0)
 
+    class Meta:
+        verbose_name_plural = 'Categories'
+        ordering = ('ordering',)
+
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
         return '/%s/' % (self.slug)
-
-    class Meta:
-        verbose_name_plural = 'Categories'
-        ordering = ('ordering',)
 
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
@@ -35,12 +32,13 @@ class Product(models.Model):
     thumbnail = models.ImageField(upload_to='uploads/', blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.title
-
     class Meta:
         verbose_name_plural = 'Products'
         ordering = ('-date_added',)
+
+    def __str__(self):
+        return self.title
+
 
     def save(self, *args, **kwargs):
         self.thumbnail = self.make_thumbnail(self.image)
@@ -87,3 +85,4 @@ class ProductImage(models.Model):
         thumbnail = File(thumb_io, name=image.name)
 
         return thumbnail
+        

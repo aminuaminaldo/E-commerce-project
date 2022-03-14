@@ -14,11 +14,15 @@ form ul {
 .newsletter-wrapper {
     padding: 30px 20px;
     text-align: center;
-    background-color: #1cd3a5;
+    background-color: #40c0ab;
     color: white;
     font-weight: bold;
     font-size: 18px;
 }
+    .newsletter-wrapper .notification {
+        margin-top: 20px;
+    }
+
     .newsletter-wrapper .field.has-addons {
         justify-content: center;
     }

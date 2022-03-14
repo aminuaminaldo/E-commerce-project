@@ -1,7 +1,7 @@
-<div class="newsletter-wrapper" id="newsletter-wrapper">
+<div class="newsletter-wrapper" id="newsletter">
     <h2 class="subtitle">Subscribe to our newsletter</h2>
 
-    <form v-on:submit.prevent="onSubmit">
+    <form @submit.prevent="onSubmit">
         <div class="field has-addons">
             <div class="control">
                 <input type="email" v-model="email" name="email" class="input" placeholder="Your e-mail address...">
@@ -36,9 +36,9 @@
                             'Content-Type': 'application/json',
                             'X-CSRFToken': '{{ csrf_token }}'
                         },
+                        credentials: 'same-origin',
                         body: JSON.stringify({'email': this.email})
                     })
-                    console.log(this.email)
                     .then(response => {
                         return response.json()
                     })
@@ -54,5 +54,5 @@
                     })
                 }  
             }
-            }).mount('#newsletter-wrapper')
+            }).mount('#newsletter')
 </script>
